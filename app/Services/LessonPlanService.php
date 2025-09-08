@@ -416,6 +416,7 @@ class LessonPlanService
                 ->where('subject', $subject)
                 ->where('month', $month)
                 ->where('year', $year)
+                ->where('date','>=',$startDate)
                 ->orderBy('date');
 
             if ($lastName) {
@@ -483,6 +484,8 @@ class LessonPlanService
 
     private function calculateWorksheetsWithRepeats(array $allEntries, int $startingEntryIndex, int $startingPage, array $patternValues, array $newConceptsWorksheets)
     {
+        Log::info($startingEntryIndex);
+        
         $calculatedValues = [];
         $REPEAT_PATTERN_LENGTH = 3;
 

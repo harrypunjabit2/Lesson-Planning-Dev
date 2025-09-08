@@ -797,7 +797,6 @@ function sortLessonData(data) {
 }
 
 function isDateInPast(dateStr, month, year) {
-    const now = new Date();
     const monthNames = [
         'January', 'February', 'March', 'April', 'May', 'June',
         'July', 'August', 'September', 'October', 'November', 'December'
@@ -807,15 +806,31 @@ function isDateInPast(dateStr, month, year) {
     
     const targetDate = new Date(year, monthIndex, parseInt(dateStr));
     
-    // Get today's date without time (set to midnight)
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    // Get today's date in PST timezone
+    const today = getPSTDate();
     
     // Set target date to midnight for fair comparison
     targetDate.setHours(0, 0, 0, 0);
     
     return targetDate < today;
 }
+
+// Helper function to get current date in PST timezone
+function getPSTDate() {
+    const now = new Date();
+    
+    // Convert to PST (Pacific Standard Time) - UTC-8
+    // Note: This handles PST (UTC-8) but doesn't account for PDT (UTC-7) automatically
+    const pstOffset = -8 * 60; // PST is UTC-8 (in minutes)
+    const utc = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const pstTime = new Date(utc + (pstOffset * 60000));
+    
+    // Set to midnight for comparison
+    pstTime.setHours(0, 0, 0, 0);
+    
+    return pstTime;
+}
+
 
 // Update Functions - Only available for users with edit permissions
 async function updateLastCompleted(fullStudentName, subject, month, date) {
